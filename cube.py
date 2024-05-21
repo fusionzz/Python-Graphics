@@ -1,5 +1,6 @@
 import sys
 import pygame
+import math
 
 def main():
     pygame.init()
@@ -57,7 +58,8 @@ def main():
         #     x += 1
 
         #cube
-        pygame.draw.line()
+        pygame.draw.line(screen, white, [x_start, y_start], [x_start + side, y_start])
+        pygame.draw.line(screen, white, [x_start, y_start], [x_start, y_start + side])
 
         pygame.display.update()
 
