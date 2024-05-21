@@ -35,23 +35,29 @@ def main():
         text = font.render(str(letter), True, white)
         display_surface.blit(text, (x_start, y_start))
 
-    x, y = 0, 0
+    x_start, y_start = WIDTH / 2, HEIGHT / 2
+    side = 100
 
     run = True
 
     while(run):
         screen.fill((black))
-        text_display("x:" + str(x) + " y:" + str(y), 0, 0)
-        text_display("a", x, y)
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_UP]:
-            y -= 1
-        if keys[pygame.K_DOWN]:
-            y += 1
-        if keys[pygame.K_LEFT]:
-            x -= 1
-        if keys[pygame.K_RIGHT]:
-            x += 1
+
+        #displays x and y coords
+        #text_display("x:" + str(x) + " y:" + str(y), 0, 0)
+
+        # keys = pygame.key.get_pressed()
+        # if keys[pygame.K_UP]:
+        #     y -= 1
+        # if keys[pygame.K_DOWN]:
+        #     y += 1
+        # if keys[pygame.K_LEFT]:
+        #     x -= 1
+        # if keys[pygame.K_RIGHT]:
+        #     x += 1
+
+        #cube
+        pygame.draw.line()
 
         pygame.display.update()
 
@@ -60,33 +66,25 @@ def main():
             if event.type == pygame.QUIT:
                 run = False
 
-def main_old():
-    side = 0
-    if len(sys.argv) < 2 or len(sys.argv) > 2:
-        side = 1
-    else:
-        side = int(sys.argv[1])
-    draw(create_square(side))
+# def create_square_array(side):
+#     square_array = [[0 for j in range(side)] for i in range(side + 1)] 
+#     #top side
+#     for i in range(side):
+#         square_array[0][i] = "_"
+#     #left and right sides
+#     for i in range(1, side):
+#         square_array[i][0] = "|"
+#         square_array[i][side - 1] = "|"
+#     #bottom side
+#     for i in range(side):
+#         square_array[side][i] = "_"
+#     return square_array
 
-def create_square(side):
-    square_array = [[0 for j in range(side)] for i in range(side + 1)] 
-    #top side
-    for i in range(side):
-        square_array[0][i] = "_"
-    #left and right sides
-    for i in range(1, side):
-        square_array[i][0] = "|"
-        square_array[i][side - 1] = "|"
-    #bottom side
-    for i in range(side):
-        square_array[side][i] = "_"
-    return square_array
-
-def draw(array):
-    for i in range(len(array)):
-        for j in range(len(array[i])):
-            print(array[i][j], end="")
-        print()
+# def draw(array):
+#     for i in range(len(array)):
+#         for j in range(len(array[i])):
+#             print(array[i][j], end="")
+#         print()
 
 if __name__ == "__main__":
     main()
