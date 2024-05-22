@@ -1,125 +1,147 @@
-import pygame
+import sys, math, pygame
 
-def main():
-    pygame.init()
+class Point3D:
+    def __init__(self, x = 0, y = 0, z = 0):
+        self.x, self.y, self.z = float(x), float(y), float(z)
 
-    WIDTH = 1280
-    HEIGHT = 800
+    def rotateX(self, angle):
+        """ Rotates the point around the X axis by the given angle in degrees. """
+        rad = angle * math.pi / 180
+        cosa = math.cos(rad)
+        sina = math.sin(rad)
+        y = self.y * cosa - self.z * sina
+        z = self.y * sina + self.z * cosa
+        return Point3D(self.x, y, z)
 
-    screen = pygame.display.set_mode((WIDTH, HEIGHT))
+    def rotateY(self, angle):
+        """ Rotates the point around the Y axis by the given angle in degrees. """
+        rad = angle * math.pi / 180
+        cosa = math.cos(rad)
+        sina = math.sin(rad)
+        z = self.z * cosa - self.x * sina
+        x = self.z * sina + self.x * cosa
+        return Point3D(x, self.y, z)
 
-    #choose between resolution or fullscreen
-    display_surface = pygame.display.set_mode((WIDTH, HEIGHT))
-    #display_surface = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+    def rotateZ(self, angle):
+        """ Rotates the point around the Z axis by the given angle in degrees. """
+        rad = angle * math.pi / 180
+        cosa = math.cos(rad)
+        sina = math.sin(rad)
+        x = self.x * cosa - self.y * sina
+        y = self.x * sina + self.y * cosa
+        return Point3D(x, y, self.z)
 
-    pygame.display.set_caption("Cube")
+    def project(self, win_width, win_height, fov, viewer_distance):
+        """ Transforms this 3D point to 2D using a perspective projection. """
+        factor = fov / (viewer_distance + self.z)
+        x = self.x * factor + win_width / 2
+        y = -self.y * factor + win_height / 2
+        return Point3D(x, y, 1)
 
-    white = (255, 255, 255)
-    black = (0, 0, 0)
+class Simulation:
+    def __init__(self, win_width = 640, win_height = 480):
+        pygame.init()
 
-     #coords of cube in hypothetical 3d plane
-    # point c is at starting coords
-    #side length is variable "side"
-    #
-    #      a-----b
-    #      |  e----f  
-    #      |  |    |
-    #      c--|--d |
-    #         g----h
+        self.screen = pygame.display.set_mode((win_width, win_height))
+        pygame.display.set_caption("3D Wireframe Cube Simulation (http://codeNtronix.com)")
 
-    x_start, y_start, z_start = WIDTH / 2, HEIGHT / 2, 100
-    side_length = 100
+        self.clock = pygame.time.Clock()
 
-    c = [x_start, y_start, z_start]
-    d = [x_start + side_length, y_start, z_start]
-    a = [x_start, y_start + side_length, z_start]
-    b = [x_start + side_length, y_start + side_length, z_start]
-    e = [x_start, y_start + side_length, z_start + side_length]
-    f = [x_start + side_length, y_start + side_length, z_start + side_length]
-    g = [x_start, y_start, z_start + side_length]
-    h = [x_start + side_length, y_start, z_start + side_length]
+        self.vertices = [
+            Point3D(-1,-1,-1),
+            Point3D(-1,1,-1),
+            Point3D(1,1,-1),
+            Point3D(1,-1,-1),
+            Point3D(-1,1,1),
+            Point3D(1,1,1),
+            Point3D(1,-1,1),
+            Point3D(-1,-1,1)
+            ]
 
-    def wiki3d(point_coords, camera_coords, screen_coords):
-        a_x = point_coords[0]
-        a_y = point_coords[1]
-        a_z = point_coords[2]
+        self.vertices2 = [
+            Point3D(-1,-1,-1),
+            Point3D(-1,0,-1),
+            Point3D(0,0,-1),
+            Point3D(0,-1,-1),
+            Point3D(-1,0,0),
+            Point3D(0,0,0),
+            Point3D(0,-1,0),
+            Point3D(-1,-1,0)
+            ]
 
-        c_x = camera_coords[0]
-        c_y = camera_coords[1]
-        c_z = camera_coords[2]
 
-        e_x = screen_coords[0]
-        e_y = screen_coords[1]
-        e_z = screen_coords[2]
+        self.vertices3 = [
+            Point3D(0,-1,-1),
+            Point3D(0,0,-1),
+            Point3D(1,0,-1),
+            Point3D(1,-1,-1),
+            Point3D(0,0,0),
+            Point3D(1,0,0),
+            Point3D(1,-1,0),
+            Point3D(0,-1,0)
+            ]
 
-        d_x = a_x - c_x
-        d_y = a_y - c_y
-        d_z = a_z - c_z
+        # Define the vertices that compose each of the 6 faces. These numbers are
+        # indices to the vertices list defined above.
+        self.faces = [(0,1,2,3),(0,1,4,7),(4,5,6,7),(7,6,3,0),(5,6,3,2)]
+        self.faces2 = [(0,1,2,3),(0,1,4,7),(4,5,6,7),(7,6,3,0),(5,6,3,2)]
 
-        b_x = (e_z/d_z) * d_x + e_x
-        b_y = (e_z/d_z) * d_y + e_y
 
-        return (b_x, b_y)
-    
-    camera_coords = [0,0,0]
-    screen_coords = [0,0,200]
+        self.angleX, self.angleY, self.angleZ = 0, 0, 0
 
-    run = True
+    def run(self):
+        """ Main Loop """
+        while 1:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:       
+                    sys.exit()
 
-    while(run):
-        screen.fill((black))
+            self.clock.tick(50)
+            self.screen.fill((0,0,0))
 
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_w]:
-            camera_coords[1] += 1
-        if keys[pygame.K_s]:
-            camera_coords[1] -= 1
-        if keys[pygame.K_a]:
-            camera_coords[0] -= 1
-        if keys[pygame.K_d]:
-            camera_coords[0] += 1
-        if keys[pygame.K_UP]:
-            screen_coords[1] += 1
-        if keys[pygame.K_DOWN]:
-            screen_coords[1] -= 1
-        if keys[pygame.K_LEFT]:
-            screen_coords[0] -= 1
-        if keys[pygame.K_RIGHT]:
-            screen_coords[0] += 1
+            # Will hold transformed vertices.
+            t = []
+            t1 = []  
 
-        new_a = wiki3d(a, camera_coords, screen_coords)
-        new_b = wiki3d(b, camera_coords, screen_coords)
-        new_c = wiki3d(c, camera_coords, screen_coords)
-        new_d = wiki3d(d, camera_coords, screen_coords)
-        new_e = wiki3d(e, camera_coords, screen_coords)
-        new_f = wiki3d(f, camera_coords, screen_coords)
-        new_g = wiki3d(g, camera_coords, screen_coords)
-        new_h = wiki3d(h, camera_coords, screen_coords)
+            for v in self.vertices:
+                # Rotate the point around X axis, then around Y axis, and finally around Z axis.
+                r = v.rotateX(self.angleX).rotateY(self.angleY).rotateZ(self.angleZ)
+                # Transform the point from 3D to 2D
+                p = r.project(self.screen.get_width(), self.screen.get_height(), 256, 4)
+                # Put the point in the list of transformed vertices
+                t.append(p)
+                x, y = int(p.x), int(p.y)
+                self.screen.fill((255,0,0),(x,y,2,2))
 
-        pygame.draw.line(screen, white, new_a, new_b)
-        pygame.draw.line(screen, white, new_a, new_c)
-        pygame.draw.line(screen, white, new_a, new_e)
-        pygame.draw.line(screen, white, new_b, new_d)
-        pygame.draw.line(screen, white, new_b, new_f)
-        pygame.draw.line(screen, white, new_c, new_d)
-        pygame.draw.line(screen, white, new_c, new_g)
-        pygame.draw.line(screen, white, new_d, new_h)
-        pygame.draw.line(screen, white, new_e, new_f)
-        pygame.draw.line(screen, white, new_e, new_g)
-        pygame.draw.line(screen, white, new_f, new_h)
-        pygame.draw.line(screen, white, new_g, new_h)
 
-        pygame.display.update()
+            for v1 in self.vertices2:
+                # Rotate the point around X axis, then around Y axis, and finally around Z axis.
+                r1 = v1.rotateX(self.angleX).rotateY(self.angleY).rotateZ(self.angleZ)
+                # Transform the point from 3D to 2D
+                p1 = r1.project(self.screen.get_width(), self.screen.get_height(), 256, 4)
+                # Put the point in the list of transformed vertices
+                t1.append(p1)
+                x, y = int(p1.x), int(p1.y)
+                self.screen.fill((255,0,0),(x,y,3,3)) 
 
-        #closes window
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                run = False
+            for f in self.faces:
+                pygame.draw.line(self.screen, (255,255,255), (t[f[0]].x, t[f[0]].y), (t[f[1]].x, t[f[1]].y))
+                pygame.draw.line(self.screen, (255,255,255), (t[f[1]].x, t[f[1]].y), (t[f[2]].x, t[f[2]].y))
+                pygame.draw.line(self.screen, (255,255,255), (t[f[2]].x, t[f[2]].y), (t[f[3]].x, t[f[3]].y))
+                pygame.draw.line(self.screen, (255,255,255), (t[f[3]].x, t[f[3]].y), (t[f[0]].x, t[f[0]].y))
+
+
+            for f1 in self.faces2:
+                pygame.draw.line(self.screen, (255,255,255), (t1[f1[0]].x, t1[f1[0]].y), (t1[f1[1]].x, t1[f1[1]].y))
+                pygame.draw.line(self.screen, (255,255,255), (t1[f1[1]].x, t1[f1[1]].y), (t1[f1[2]].x, t1[f1[2]].y))
+                pygame.draw.line(self.screen, (255,255,255), (t1[f1[2]].x, t1[f1[2]].y), (t1[f1[3]].x, t1[f1[3]].y))
+                pygame.draw.line(self.screen, (255,255,255), (t1[f1[3]].x, t1[f1[3]].y), (t1[f1[0]].x, t1[f1[0]].y))
+
+            self.angleX += 1
+            self.angleY += 1
+            self.angleZ += 1
+
+            pygame.display.flip()
 
 if __name__ == "__main__":
-    main()
-
-        
-
-
-
+    Simulation().run()
