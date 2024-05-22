@@ -145,7 +145,29 @@ def main():
             c_x -= 1
         if keys[pygame.K_a]:
             c_x += 1
+        if keys[pygame.K_i]:
+            z_start -= 1
+            if z_start <= 1:
+                z_start = 1
+        if keys[pygame.K_k]:
+            z_start += 1
+        if keys[pygame.K_t]:
+            x_start -= 1
+        if keys[pygame.K_g]:
+            x_start += 1
+        if keys[pygame.K_u]:
+            y_start -= 1
+        if keys[pygame.K_j]:
+            y_start += 1
 
+        c = (x_start, y_start, z_start)
+        d = (x_start + side, y_start, z_start)
+        a = (x_start, y_start + side, z_start)
+        b = (x_start + side, y_start + side, z_start)
+        e = (x_start, y_start + side, z_start + side)
+        f = (x_start + side, y_start + side, z_start + side)
+        g = (x_start, y_start, z_start + side)
+        h = (x_start + side, y_start, z_start + side)
 
         new_a = perspective_projection(a, distance_to_camera)
         new_b = perspective_projection(b, distance_to_camera)
