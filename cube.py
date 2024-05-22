@@ -87,7 +87,7 @@ def main():
         return (new_x, new_y)
     
     #version3
-    def wiki3d(point_coords, camera_coords, camera_distance):
+    def wiki3d(point_coords, camera_coords, screen_coords):
         a_x = point_coords[0]
         a_y = point_coords[1]
         a_z = point_coords[2]
@@ -96,12 +96,16 @@ def main():
         c_y = camera_coords[1]
         c_z = camera_coords[2]
 
+        e_x = screen_coords[0]
+        e_y = screen_coords[1]
+        camera_distance = screen_coords[2]
+
         d_x = a_x - c_x
         d_y = a_y - c_y
         d_z = a_z - c_z
 
-        b_x = (camera_distance/d_z) * d_x
-        b_y = (camera_distance/d_z) * d_y
+        b_x = (camera_distance/d_z) * d_x + e_x
+        b_y = (camera_distance/d_z) * d_y + e_y
 
         return (b_x, b_y)
     
@@ -131,15 +135,18 @@ def main():
     camera_y = 0
     camera_z = 0
     camera_coords = (camera_x, camera_y, camera_z)
-    camera_distance = 100
-    newnewnew_a = wiki3d(a, camera_coords, camera_distance)
-    newnewnew_b = wiki3d(b, camera_coords, camera_distance)
-    newnewnew_c = wiki3d(c, camera_coords, camera_distance)
-    newnewnew_d = wiki3d(d, camera_coords, camera_distance)
-    newnewnew_e = wiki3d(e, camera_coords, camera_distance)
-    newnewnew_f = wiki3d(f, camera_coords, camera_distance)
-    newnewnew_g = wiki3d(g, camera_coords, camera_distance)
-    newnewnew_h = wiki3d(h, camera_coords, camera_distance)
+    screen_x = 0
+    screen_y = 0
+    screen_z = 100
+    screen_coords = (screen_x, screen_y, screen_z)
+    newnewnew_a = wiki3d(a, camera_coords, screen_coords)
+    newnewnew_b = wiki3d(b, camera_coords, screen_coords)
+    newnewnew_c = wiki3d(c, camera_coords, screen_coords)
+    newnewnew_d = wiki3d(d, camera_coords, screen_coords)
+    newnewnew_e = wiki3d(e, camera_coords, screen_coords)
+    newnewnew_f = wiki3d(f, camera_coords, screen_coords)
+    newnewnew_g = wiki3d(g, camera_coords, screen_coords)
+    newnewnew_h = wiki3d(h, camera_coords, screen_coords)
     
 
     run = True
@@ -197,13 +204,13 @@ def main():
         if keys[pygame.K_j]:
             y_start += 1
         if keys[pygame.K_UP]:
-            camera_y += 1
+            screen_y += 1
         if keys[pygame.K_DOWN]:
-            camera_y -= 1
+            screen_y -= 1
         if keys[pygame.K_LEFT]:
-            camera_x += 1
+            screen_x += 1
         if keys[pygame.K_RIGHT]:
-            camera_x -= 1
+            screen_x -= 1
         if keys[pygame.K_w]:
             c_y -= 1
         if keys[pygame.K_s]:
@@ -214,6 +221,7 @@ def main():
             c_x += 1
 
         camera_coords = (camera_x, camera_y, camera_z)
+        screen_coords = (screen_x, screen_y, screen_z)
 
         c = (x_start, y_start, z_start)
         d = (x_start + side, y_start, z_start)
@@ -242,14 +250,14 @@ def main():
         newnew_g = to_3d(g, f_x, f_y, c_x, c_y)
         newnew_h = to_3d(h, f_x, f_y, c_x, c_y)
 
-        newnewnew_a = wiki3d(a, camera_coords, camera_distance)
-        newnewnew_b = wiki3d(b, camera_coords, camera_distance)
-        newnewnew_c = wiki3d(c, camera_coords, camera_distance)
-        newnewnew_d = wiki3d(d, camera_coords, camera_distance)
-        newnewnew_e = wiki3d(e, camera_coords, camera_distance)
-        newnewnew_f = wiki3d(f, camera_coords, camera_distance)
-        newnewnew_g = wiki3d(g, camera_coords, camera_distance)
-        newnewnew_h = wiki3d(h, camera_coords, camera_distance)
+        newnewnew_a = wiki3d(a, camera_coords, screen_coords)
+        newnewnew_b = wiki3d(b, camera_coords, screen_coords)
+        newnewnew_c = wiki3d(c, camera_coords, screen_coords)
+        newnewnew_d = wiki3d(d, camera_coords, screen_coords)
+        newnewnew_e = wiki3d(e, camera_coords, screen_coords)
+        newnewnew_f = wiki3d(f, camera_coords, screen_coords)
+        newnewnew_g = wiki3d(g, camera_coords, screen_coords)
+        newnewnew_h = wiki3d(h, camera_coords, screen_coords)
 
         #version1 3d
         # pygame.draw.line(screen, white, new_a, new_b)
