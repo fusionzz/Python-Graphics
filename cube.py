@@ -86,6 +86,26 @@ def main():
 
         return (new_x, new_y)
     
+    #version3
+    def wiki3d(point_coords, camera_coords, camera_distance):
+        a_x = point_coords[0]
+        a_y = point_coords[1]
+        a_z = point_coords[2]
+
+        c_x = camera_coords[0]
+        c_y = camera_coords[1]
+        c_z = camera_coords[2]
+
+        d_x = a_x - c_x
+        d_y = a_y - c_y
+        d_z = a_z - c_z
+
+        b_x = (camera_distance/d_z) * d_x
+        b_y = (camera_distance/d_z) * d_y
+
+        return (b_x, b_y)
+    
+    #version1
     new_a = perspective_projection(a, distance_to_camera)
     new_b = perspective_projection(b, distance_to_camera)
     new_c = perspective_projection(c, distance_to_camera)
@@ -95,6 +115,7 @@ def main():
     new_g = perspective_projection(g, distance_to_camera)
     new_h = perspective_projection(h, distance_to_camera)
 
+    #version2
     f_x, f_y, c_x, c_y = 10,10,10,10
     newnew_a = to_3d(a, f_x, f_y, c_x, c_y)
     newnew_b = to_3d(b, f_x, f_y, c_x, c_y)
@@ -105,6 +126,21 @@ def main():
     newnew_g = to_3d(g, f_x, f_y, c_x, c_y)
     newnew_h = to_3d(h, f_x, f_y, c_x, c_y)
 
+    #version3
+    camera_x = 0
+    camera_y = 0
+    camera_z = 0
+    camera_coords = (camera_x, camera_y, camera_z)
+    camera_distance = 100
+    newnewnew_a = wiki3d(a, camera_coords, camera_distance)
+    newnewnew_b = wiki3d(b, camera_coords, camera_distance)
+    newnewnew_c = wiki3d(c, camera_coords, camera_distance)
+    newnewnew_d = wiki3d(d, camera_coords, camera_distance)
+    newnewnew_e = wiki3d(e, camera_coords, camera_distance)
+    newnewnew_f = wiki3d(f, camera_coords, camera_distance)
+    newnewnew_g = wiki3d(g, camera_coords, camera_distance)
+    newnewnew_h = wiki3d(h, camera_coords, camera_distance)
+    
 
     run = True
 
@@ -128,23 +164,24 @@ def main():
         # if keys[pygame.K_RIGHT]:
         #     x += 1
 
+        #version2 keys
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_UP]:
-            f_y -= 1
-        if keys[pygame.K_DOWN]:
-            f_y += 1
-        if keys[pygame.K_LEFT]:
-            f_x -= 1
-        if keys[pygame.K_RIGHT]:
-            f_x += 1
-        if keys[pygame.K_w]:
-            c_y -= 1
-        if keys[pygame.K_s]:
-            c_y += 1
-        if keys[pygame.K_d]:
-            c_x -= 1
-        if keys[pygame.K_a]:
-            c_x += 1
+        # if keys[pygame.K_UP]:
+        #     f_y -= 1
+        # if keys[pygame.K_DOWN]:
+        #     f_y += 1
+        # if keys[pygame.K_LEFT]:
+        #     f_x -= 1
+        # if keys[pygame.K_RIGHT]:
+        #     f_x += 1
+        # if keys[pygame.K_w]:
+        #     c_y -= 1
+        # if keys[pygame.K_s]:
+        #     c_y += 1
+        # if keys[pygame.K_d]:
+        #     c_x -= 1
+        # if keys[pygame.K_a]:
+        #     c_x += 1
         if keys[pygame.K_i]:
             z_start -= 1
             if z_start <= 1:
@@ -159,6 +196,24 @@ def main():
             y_start -= 1
         if keys[pygame.K_j]:
             y_start += 1
+        if keys[pygame.K_UP]:
+            camera_y += 1
+        if keys[pygame.K_DOWN]:
+            camera_y -= 1
+        if keys[pygame.K_LEFT]:
+            camera_x += 1
+        if keys[pygame.K_RIGHT]:
+            camera_x -= 1
+        if keys[pygame.K_w]:
+            c_y -= 1
+        if keys[pygame.K_s]:
+            c_y += 1
+        if keys[pygame.K_d]:
+            c_x -= 1
+        if keys[pygame.K_a]:
+            c_x += 1
+
+        camera_coords = (camera_x, camera_y, camera_z)
 
         c = (x_start, y_start, z_start)
         d = (x_start + side, y_start, z_start)
@@ -187,6 +242,15 @@ def main():
         newnew_g = to_3d(g, f_x, f_y, c_x, c_y)
         newnew_h = to_3d(h, f_x, f_y, c_x, c_y)
 
+        newnewnew_a = wiki3d(a, camera_coords, camera_distance)
+        newnewnew_b = wiki3d(b, camera_coords, camera_distance)
+        newnewnew_c = wiki3d(c, camera_coords, camera_distance)
+        newnewnew_d = wiki3d(d, camera_coords, camera_distance)
+        newnewnew_e = wiki3d(e, camera_coords, camera_distance)
+        newnewnew_f = wiki3d(f, camera_coords, camera_distance)
+        newnewnew_g = wiki3d(g, camera_coords, camera_distance)
+        newnewnew_h = wiki3d(h, camera_coords, camera_distance)
+
         #version1 3d
         # pygame.draw.line(screen, white, new_a, new_b)
         # pygame.draw.line(screen, white, new_a, new_c)
@@ -202,18 +266,32 @@ def main():
         # pygame.draw.line(screen, white, new_g, new_h)
 
         #version2 3d
-        pygame.draw.line(screen, white, newnew_a, newnew_b)
-        pygame.draw.line(screen, white, newnew_a, newnew_c)
-        pygame.draw.line(screen, white, newnew_a, newnew_e)
-        pygame.draw.line(screen, white, newnew_b, newnew_d)
-        pygame.draw.line(screen, white, newnew_b, newnew_f)
-        pygame.draw.line(screen, white, newnew_c, newnew_d)
-        pygame.draw.line(screen, white, newnew_c, newnew_g)
-        pygame.draw.line(screen, white, newnew_d, newnew_h)
-        pygame.draw.line(screen, white, newnew_e, newnew_f)
-        pygame.draw.line(screen, white, newnew_e, newnew_g)
-        pygame.draw.line(screen, white, newnew_f, newnew_h)
-        pygame.draw.line(screen, white, newnew_g, newnew_h)
+        # pygame.draw.line(screen, white, newnew_a, newnew_b)
+        # pygame.draw.line(screen, white, newnew_a, newnew_c)
+        # pygame.draw.line(screen, white, newnew_a, newnew_e)
+        # pygame.draw.line(screen, white, newnew_b, newnew_d)
+        # pygame.draw.line(screen, white, newnew_b, newnew_f)
+        # pygame.draw.line(screen, white, newnew_c, newnew_d)
+        # pygame.draw.line(screen, white, newnew_c, newnew_g)
+        # pygame.draw.line(screen, white, newnew_d, newnew_h)
+        # pygame.draw.line(screen, white, newnew_e, newnew_f)
+        # pygame.draw.line(screen, white, newnew_e, newnew_g)
+        # pygame.draw.line(screen, white, newnew_f, newnew_h)
+        # pygame.draw.line(screen, white, newnew_g, newnew_h)
+
+        #version3
+        pygame.draw.line(screen, white, newnewnew_a, newnewnew_b)
+        pygame.draw.line(screen, white, newnewnew_a, newnewnew_c)
+        pygame.draw.line(screen, white, newnewnew_a, newnewnew_e)
+        pygame.draw.line(screen, white, newnewnew_b, newnewnew_d)
+        pygame.draw.line(screen, white, newnewnew_b, newnewnew_f)
+        pygame.draw.line(screen, white, newnewnew_c, newnewnew_d)
+        pygame.draw.line(screen, white, newnewnew_c, newnewnew_g)
+        pygame.draw.line(screen, white, newnewnew_d, newnewnew_h)
+        pygame.draw.line(screen, white, newnewnew_e, newnewnew_f)
+        pygame.draw.line(screen, white, newnewnew_e, newnewnew_g)
+        pygame.draw.line(screen, white, newnewnew_f, newnewnew_h)
+        pygame.draw.line(screen, white, newnewnew_g, newnewnew_h)
 
         pygame.display.update()
 
