@@ -69,7 +69,7 @@ class Wireframe:
         #confirm not a dupe edge
         for listEdge in self.edges:
             if listEdge == edge:
-                print(str(edge) + " is already in wireframe")
+                print(str(edge) + " is already in the wireframe")
                 return
 
         #check that nodes are in wireframe before adding edge
@@ -89,13 +89,13 @@ class Wireframe:
         # if not stop:
         #     raise ValueError(stop + " is not in the wireframe, please add it first")
 
-        if not start:
-            self.addNode(Node(start))
-        if not stop:
-            self.addNode(Node(stop))
+        if not checkStart:
+            self.addNode(start)
+        if not checkStop:
+            self.addNode(stop)
 
         self.edges.append(edge)
 
     def addEdges(self, edges: list[Edge]) -> None:
         for edge in edges:
-            self.addEdge(Edge(edge))
+            self.addEdge(edge)

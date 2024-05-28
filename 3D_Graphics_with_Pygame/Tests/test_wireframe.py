@@ -35,5 +35,22 @@ class TestWireframeClass(unittest.TestCase):
         wf_str = "Nodes:\nx:1 y:2 z:3\nx:2 y:2 z:2\nx:1 y:1 z:1\nEdges:\nx:1 y:1 z:1 to x:2 y:2 z:2\nx:1 y:2 z:3 to x:1 y:1 z:1\n"
         self.assertEqual(wf_str, str(self.wireframe))
 
+    def test_add_dupe_edge(self):
+        capturedOutput= StringIO()
+        sys.stdout = capturedOutput
+        self.wireframe.addEdge(Edge(Node([1, 1, 1]), Node([2, 2, 2])))
+        sys.stdout = sys.__stdout__
+        self.assertEqual("x:1 y:1 z:1 to x:2 y:2 z:2 is already in the wireframe\n", capturedOutput.getvalue())
+    
+    def test_add_edge_no_node_start(self):
+        self.wireframe.addEdge(Edge(Node([3, 3, 3]), Node([1, 2, 3])))
+        wf_str = "Nodes:\nx:1 y:2 z:3\nx:2 y:2 z:2\nx:1 y:1 z:1\nx:3 y:3 z:3\nEdges:\nx:1 y:1 z:1 to x:2 y:2 z:2\nx:3 y:3 z:3 to x:1 y:2 z:3\n"
+        self.assertEqual(wf_str, str(self.wireframe))
+    
+    def test_add_edge_no_node_stop(self):
+        self.wireframe.addEdge(Edge(Node([1, 2, 3]), Node([3, 3, 3])))
+        wf_str = "Nodes:\nx:1 y:2 z:3\nx:2 y:2 z:2\nx:1 y:1 z:1\nx:3 y:3 z:3\nEdges:\nx:1 y:1 z:1 to x:2 y:2 z:2\nx:1 y:2 z:3 to x:3 y:3 z:3\n"
+        self.assertEqual(wf_str, str(self.wireframe))
+
 if __name__ == '__main__':
     unittest.main()
