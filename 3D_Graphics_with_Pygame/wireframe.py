@@ -1,3 +1,5 @@
+from functools import singledispatchmethod
+
 class Node:
     def __init__(self, coordinates: list[float]) -> None:
         self.x = coordinates[0]
@@ -7,7 +9,7 @@ class Node:
     #compare two nodes for equality
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Node):
-            raise TypeError(other + " is not a node,")
+            raise TypeError(str(other) + " is not a node,")
 
         return self.x == other.x and self.y == other.y and self.z == other.z
     
@@ -24,7 +26,7 @@ class Edge:
     #compare two edges for equality
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Edge):
-            raise TypeError(other + " is not an edge.")
+            raise TypeError(str(other) + " is not an edge.")
         
         #edges are bidirectional
         return (self.start == other.start and self.stop == other.stop) or (self.start == other.stop and self.stop == other.start)
@@ -65,6 +67,7 @@ class Wireframe:
         for node in nodes:
             self.addNode(node)
 
+    @singledispatchmethod
     def addEdge(self, edge: Edge) -> None:
         #confirm not a dupe edge
         for listEdge in self.edges:
@@ -95,7 +98,24 @@ class Wireframe:
             self.addNode(stop)
 
         self.edges.append(edge)
+    
+    @addEdge.register(list)
+    def _(self, edge: list[int]) -> None:
+        if len(edge) != 2:
+            raise ValueError("Please provide only 2 node indices")
+        
+        if edge[0] >= len(self.nodes) or edge[1] >= len(self.nodes) or edge[0] < 0 or edge[1] < 0:
+            raise ValueError("Index out of bounds")
+        
+        self.edges.append(Edge(self.nodes[edge[0]], self.nodes[edge[1]]))
 
+    @singledispatchmethod
     def addEdges(self, edges: list[Edge]) -> None:
         for edge in edges:
             self.addEdge(edge)
+
+    @addEdges.register(list)
+    def _(self, edges: list[list[int]]) -> None:
+        for edge in edges:
+            self.addEdge(edge)
+    

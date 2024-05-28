@@ -35,6 +35,11 @@ class TestWireframeClass(unittest.TestCase):
         wf_str = "Nodes:\nx:1 y:2 z:3\nx:2 y:2 z:2\nx:1 y:1 z:1\nEdges:\nx:1 y:1 z:1 to x:2 y:2 z:2\nx:1 y:2 z:3 to x:1 y:1 z:1\n"
         self.assertEqual(wf_str, str(self.wireframe))
 
+    def test_add_edge_node_indices(self):
+        self.wireframe.addEdge([0, 1])
+        wf_str = wf_str = "Nodes:\nx:1 y:2 z:3\nx:2 y:2 z:2\nx:1 y:1 z:1\nEdges:\nx:1 y:1 z:1 to x:2 y:2 z:2\nx:1 y:2 z:3 to x:2 y:2 z:2\n"
+        self.assertEqual(wf_str, str(self.wireframe))
+
     def test_add_dupe_edge(self):
         capturedOutput= StringIO()
         sys.stdout = capturedOutput
