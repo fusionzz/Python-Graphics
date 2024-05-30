@@ -145,6 +145,7 @@ class Wireframe:
             raise ValueError("Please enter valid axis")
 
     #can calculate center
+    #new comment
     def scale(self, center_coords:list, scale:int) -> None:
         """Scale the wireframe from the center of the screen"""
 
