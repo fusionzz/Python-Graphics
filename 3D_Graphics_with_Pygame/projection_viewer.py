@@ -25,6 +25,22 @@ class ProjectionViewer:
         """Add a named wireframe object"""
         self.wireframes[name] = wireframe
 
+    def display(self):
+        """Draw wireframes on the screen"""
+
+        self.screen.fill(self.background)
+
+        for wireframe in self.wireframes.values():
+            if self.displayEdges:
+                for edge in wireframe.edges:
+                    pygame.draw.line(self.screen, self.edgeColor, (edge.start.x, edge.start.y),
+                                     (edge.stop.x, edge.stop.y), 1)
+                    
+            if self.displayNodes:
+                for node in wireframe.nodes:
+                    pygame.draw.circle(self.screen, self.nodeColor, (node.x, node.y), 
+                                       self.nodeRadius, 0)
+
     def run(self):
         """Create pygame screen until closed"""
 
@@ -35,7 +51,7 @@ class ProjectionViewer:
                 if event.type == pygame.QUIT:
                     running = False
             
-            self.screen.fill(self.background)
+            self.display()
             pygame.display.flip()
 
 if __name__ == '__main__':

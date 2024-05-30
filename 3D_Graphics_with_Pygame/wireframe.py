@@ -134,4 +134,19 @@ class Wireframe:
     def addEdges(self, edges: list) -> None:
         for edge in edges:
             self.addEdge(edge)
-    
+
+    def translate(self, axis:str, d:int) -> None:
+        """Translates each node of wireframe by d along given axis"""
+
+        if axis in ['x', 'y', 'z']:
+            for node in self.nodes:
+                setattr(node, axis, getattr(node, axis) + d)
+        else:
+            raise ValueError("Please enter valid axis")
+
+    def scale(self, scale):
+        """Scale the wireframe from the center of the screen"""
+
+        for node in self.nodes:
+            #node.x = center_x
+            pass 
