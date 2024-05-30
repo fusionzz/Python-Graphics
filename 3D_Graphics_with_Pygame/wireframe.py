@@ -56,6 +56,10 @@ class Wireframe:
 
 
     def addNode(self, node: Node) -> None:
+        #checks for node object
+        if not isinstance(node, Node):
+            raise TypeError("Can only add Node object to nodes")
+        
         for listNode in self.nodes:
             if listNode == node:
                 print(str(node) + " is already in the wireframe")
@@ -69,6 +73,10 @@ class Wireframe:
 
     @singledispatchmethod
     def addEdge(self, edge: Edge) -> None:
+        #checks for edge object
+        if not isinstance(edge, Edge):
+            raise TypeError("Can only add Edge object to edges")
+
         #confirm not a dupe edge
         for listEdge in self.edges:
             if listEdge == edge:
@@ -104,18 +112,13 @@ class Wireframe:
         if len(edge) != 2:
             raise ValueError("Please provide only 2 node indices")
         
+        #checks that node indices are in bound
         if edge[0] >= len(self.nodes) or edge[1] >= len(self.nodes) or edge[0] < 0 or edge[1] < 0:
             raise ValueError("Index out of bounds")
         
         self.edges.append(Edge(self.nodes[edge[0]], self.nodes[edge[1]]))
 
-    @singledispatchmethod
-    def addEdges(self, edges: list[Edge]) -> None:
-        for edge in edges:
-            self.addEdge(edge)
-
-    @addEdges.register(list)
-    def _(self, edges: list[list[int]]) -> None:
+    def addEdges(self, edges: list) -> None:
         for edge in edges:
             self.addEdge(edge)
     
