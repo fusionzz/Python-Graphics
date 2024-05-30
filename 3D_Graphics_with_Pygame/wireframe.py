@@ -39,20 +39,32 @@ class Wireframe:
         self.nodes = []
         self.edges = []
 
-    def printEdges(self) -> str:
+    def strEdges(self) -> str:
         edge_str = "Edges:\n"
         for edge in self.edges:
             edge_str += str(edge) + "\n"
         return edge_str
 
-    def printNodes(self) -> str:
+    def strNodes(self) -> str:
         node_str = "Nodes:\n"
         for node in self.nodes:
             node_str += str(node) + "\n"
         return node_str
+    
+    def printEdges(self) -> None:
+        edge_str = "Edges:\n"
+        for edge in self.edges:
+            edge_str += str(edge) + "\n"
+        print(edge_str)
+
+    def printNodes(self) -> None:
+        node_str = "Nodes:\n"
+        for node in self.nodes:
+            node_str += str(node) + "\n"
+        print(node_str)
 
     def __str__(self) -> str:
-        return self.printNodes() + self.printEdges()
+        return self.strNodes() + self.strEdges()
 
 
     def addNode(self, node: Node) -> None:
@@ -109,6 +121,7 @@ class Wireframe:
     
     @addEdge.register(list)
     def _(self, edge: list[int]) -> None:
+        #checks that each edge has only 2 nodes
         if len(edge) != 2:
             raise ValueError("Please provide only 2 node indices")
         
