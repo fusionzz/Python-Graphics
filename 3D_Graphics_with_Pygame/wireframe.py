@@ -144,9 +144,17 @@ class Wireframe:
         else:
             raise ValueError("Please enter valid axis")
 
-    def scale(self, scale):
+    def scale(self, center_coords:list, scale:int) -> None:
         """Scale the wireframe from the center of the screen"""
 
+        if len(center_coords) != 2:
+            raise ValueError("Please provide x,y center coords")
+
+        center_x = center_coords[0]
+        center_y = center_coords[1]
+        #center_z = center_coords[2]
+
         for node in self.nodes:
-            #node.x = center_x
-            pass 
+            node.x = center_x + scale * (node.x - center_x)
+            node.y = center_y + scale * (node.y - center_y)
+            node.z *= scale

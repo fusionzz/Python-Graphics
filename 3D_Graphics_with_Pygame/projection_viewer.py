@@ -25,6 +25,14 @@ class ProjectionViewer:
         """Add a named wireframe object"""
         self.wireframes[name] = wireframe
 
+    def transformAll(self, axis:str, d:int):
+        for wireframe in self.wireframes.values():
+            wireframe.translate(axis, d)
+
+    def scaleAll(self, scale):
+        pass
+
+
     def display(self):
         """Draw wireframes on the screen"""
 
