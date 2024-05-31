@@ -1,4 +1,5 @@
 from functools import singledispatchmethod
+import math
 
 class Node:
     def __init__(self, coordinates: list[float]) -> None:
@@ -135,6 +136,16 @@ class Wireframe:
         for edge in edges:
             self.addEdge(edge)
 
+    def findCenter(self) -> list[float]:
+        """Find the center of the wireframe"""
+
+        num_nodes = len(self.nodes)
+        mean_x = sum([node.x for node in self.nodes]) / num_nodes
+        mean_y = sum([node.y for node in self.nodes]) / num_nodes
+        mean_z = sum([node.z for node in self.nodes]) / num_nodes
+
+        return (mean_x, mean_y, mean_z)
+    
     def translate(self, axis:str, d:int) -> None:
         """Translates each node of wireframe by d along given axis"""
 
@@ -144,9 +155,7 @@ class Wireframe:
         else:
             raise ValueError("Please enter valid axis")
 
-    #can calculate center
-    #new comment
-    def scale(self, center_coords:list, scale:int) -> None:
+    def scale(self, center_coords:list, scale:float) -> None:
         """Scale the wireframe from the center of the screen"""
 
         if len(center_coords) != 2:
@@ -160,3 +169,62 @@ class Wireframe:
             node.x = center_x + scale * (node.x - center_x)
             node.y = center_y + scale * (node.y - center_y)
             node.z *= scale
+
+    def autoScale(self, scale:float) -> None:
+        center_coords = self.findCenter()
+
+        center_x, center_y, center_z = center_coords
+
+        for node in self.nodes:
+            node.x = center_x + scale * (node.x - center_x)
+            node.y = center_y + scale * (node.y - center_y)
+            node.z *= center_z + scale * (node.z - center_z)
+
+
+    """
+    TO ROTATE AROUND AXIS:
+    convert other 2 coords to cartesian plane, aka hypotenuse and angle
+    then add angle of rotation and convert back
+    https://www.petercollingridge.co.uk/tutorials/3d/pygame/rotation/
+    """
+
+    def rotateZ(self, center:list[float], radians:float) -> None:
+        """rotate on z axis around center by radians"""
+
+        center_x, center_y, center_z = center
+
+        for node in self.nodes:
+            x = node.x - center_x
+            y = node.y - center_y
+            d = math.hypot(y, x)
+            theta = math.atan2(y, x) + radians
+            node.x = center_x + d * math.cos(theta)
+            node.y = center_y + d * math.sin(theta)
+
+    def rotateX(self, center:list[float], radians:float) -> None:
+        """rotate on x axis around center by radians"""
+
+        center_x, center_y, center_z = center
+
+        for node in self.nodes:
+            z = node.z - center_z
+            y = node.y - center_y
+            d = math.hypot(y, z)
+            theta = math.atan2(y, z) + radians
+            node.z = center_z + d * math.cos(theta)
+            node.y = center_y + d * math.sin(theta)
+
+    def rotateY(self, center:list[float], radians:float) -> None:
+        """rotate on y axis around center by radians"""
+
+        center_x, center_y, center_z = center
+
+        for node in self.nodes:
+            x = node.x - center_x
+            z = node.z - center_z
+            d = math.hypot(x, z)
+            theta = math.atan2(x, z) + radians
+            node.x = center_x + d * math.sin(theta)
+            node.z = center_z + d * math.cos(theta)
+
+

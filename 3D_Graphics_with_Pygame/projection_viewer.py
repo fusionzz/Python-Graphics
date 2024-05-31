@@ -2,6 +2,21 @@ import wireframe
 import pygame
 import cube_wireframe
 
+key_to_function = {
+        pygame.K_LEFT:   (lambda x: x.translateAll('x', -10)),
+        pygame.K_RIGHT:  (lambda x: x.translateAll('x',  10)),
+        pygame.K_DOWN:   (lambda x: x.translateAll('y',  10)),
+        pygame.K_UP:     (lambda x: x.translateAll('y', -10)),
+        pygame.K_EQUALS: (lambda x: x.scaleAll(1.25)),
+        pygame.K_MINUS:  (lambda x: x.scaleAll( 0.8)),
+        pygame.K_q: (lambda x: x.rotateAll('X',  0.1)),
+        pygame.K_w: (lambda x: x.rotateAll('X', -0.1)),
+        pygame.K_a: (lambda x: x.rotateAll('Y',  0.1)),
+        pygame.K_s: (lambda x: x.rotateAll('Y', -0.1)),
+        pygame.K_z: (lambda x: x.rotateAll('Z',  0.1)),
+        pygame.K_x: (lambda x: x.rotateAll('Z', -0.1))
+    }
+
 class ProjectionViewer:
     """Displays 3D objects on Pygame screen"""
     WHITE = (255, 255, 255)
@@ -25,12 +40,27 @@ class ProjectionViewer:
         """Add a named wireframe object"""
         self.wireframes[name] = wireframe
 
-    def transformAll(self, axis:str, d:int):
+    def translateAll(self, axis:str, d:int):
         for wireframe in self.wireframes.values():
             wireframe.translate(axis, d)
 
     def scaleAll(self, scale):
-        pass
+        """Scale all wireframes by given scale, centered at center of the screen"""
+        center_x = self.width/2
+        center_y = self.height/2
+
+        for wireframe in self.wireframes.values():
+            wireframe.scale((center_x, center_y), scale)
+
+    def rotateAll(self, axis, theta):
+        """Rotate all wireframe about their center along a given axis by theta"""
+
+        rotateFunction = 'rotate' + axis
+
+        for wireframe in self.wireframes.values():
+            center = wireframe.findCenter()
+            #calls the appropriate rotate function of the wireframe
+            getattr(wireframe, rotateFunction)(center, theta)
 
 
     def display(self):
@@ -41,7 +71,7 @@ class ProjectionViewer:
         for wireframe in self.wireframes.values():
             if self.displayEdges:
                 for edge in wireframe.edges:
-                    pygame.draw.line(self.screen, self.edgeColor, (edge.start.x, edge.start.y),
+                    pygame.draw.aaline(self.screen, self.edgeColor, (edge.start.x, edge.start.y),
                                      (edge.stop.x, edge.stop.y), 1)
                     
             if self.displayNodes:
@@ -53,11 +83,15 @@ class ProjectionViewer:
         """Create pygame screen until closed"""
 
         running = True
+
         while(running):
             #closes window
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
+                elif event.type == pygame.KEYDOWN:
+                    if event.key in key_to_function:
+                        key_to_function[event.key](self)
             
             self.display()
             pygame.display.flip()
