@@ -1,5 +1,5 @@
 from functools import singledispatchmethod
-import math
+import numpy as np
 
 class Node:
     def __init__(self, coordinates: list[float]) -> None:
@@ -196,10 +196,10 @@ class Wireframe:
         for node in self.nodes:
             x = node.x - center_x
             y = node.y - center_y
-            d = math.hypot(y, x)
-            theta = math.atan2(y, x) + radians
-            node.x = center_x + d * math.cos(theta)
-            node.y = center_y + d * math.sin(theta)
+            d = np.hypot(y, x)
+            theta = np.arctan2(y, x) + radians
+            node.x = center_x + d * np.cos(theta)
+            node.y = center_y + d * np.sin(theta)
 
     def rotateX(self, center:list[float], radians:float) -> None:
         """rotate on x axis around center by radians"""
@@ -209,10 +209,10 @@ class Wireframe:
         for node in self.nodes:
             z = node.z - center_z
             y = node.y - center_y
-            d = math.hypot(y, z)
-            theta = math.atan2(y, z) + radians
-            node.z = center_z + d * math.cos(theta)
-            node.y = center_y + d * math.sin(theta)
+            d = np.hypot(y, z)
+            theta = np.arctan2(y, z) + radians
+            node.z = center_z + d * np.cos(theta)
+            node.y = center_y + d * np.sin(theta)
 
     def rotateY(self, center:list[float], radians:float) -> None:
         """rotate on y axis around center by radians"""
@@ -222,9 +222,9 @@ class Wireframe:
         for node in self.nodes:
             x = node.x - center_x
             z = node.z - center_z
-            d = math.hypot(x, z)
-            theta = math.atan2(x, z) + radians
-            node.x = center_x + d * math.sin(theta)
-            node.z = center_z + d * math.cos(theta)
+            d = np.hypot(x, z)
+            theta = np.arctan2(x, z) + radians
+            node.x = center_x + d * np.sin(theta)
+            node.z = center_z + d * np.cos(theta)
 
 
