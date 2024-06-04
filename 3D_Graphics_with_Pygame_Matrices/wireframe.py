@@ -151,10 +151,11 @@ class Wireframe:
     
     def translate(self, axis:str, d:int) -> None:
         """Translates each node of wireframe by d along given axis"""
-
-        if axis in ['x', 'y', 'z']:
+        axes = ['x', 'y', 'z']
+        if axis in axes:
             for node in self.nodes:
-                setattr(node, axis, getattr(node, axis) + d)
+                #setattr(node, axis, getattr(node, axis) + d)
+                node[axes.index(axis)] = node[axes.index(axis)] + d
         else:
             raise ValueError("Please enter valid axis")
 
