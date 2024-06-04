@@ -43,25 +43,29 @@ class Wireframe:
     def __init__(self) -> None:
         #creates numpy array with 0 rows and 4 columns, last column for transforms
         #ex: x y z 1
-        self.nodes = np.zeros((0,4))
+        self.nodes = np.zeros((0,4), dtype=int)
         self.edges = []
 
     def strNode(self, node) -> str:
-        return "x:{node[0]} y:{node[1]} z:{node[2]}"
+        return f"x:{node[0]} y:{node[1]} z:{node[2]}"
 
     def strNodes(self) -> str:
         node_str = "Nodes:\n"
         i = 0
         for node in self.nodes:
-            node_str += "Node {i}: " + self.strNode(node) + "\n"
+            node_str += f"Node {i}: " + self.strNode(node) + "\n"
             i += 1
         return node_str
+    
+    def strEdge(self, edge):
+        return f"{edge[0]} -> {edge[1]}"
     
     def strEdges(self) -> str:
         edge_str = "Edges:\n"
         i = 0
         for edge in self.edges:
-            edge_str += "Edge {i}: {edge[0]} -> {edge[1]}\n"
+            edge_str += f"Edge {i}: " + self.strEdge(edge) + "\n"
+            i += 1
         return edge_str
     
     def printEdges(self) -> None:
@@ -91,16 +95,16 @@ class Wireframe:
         """
         
         #addes ones column to node
-        ones_column = np.ones((1,))
-        ones_added = np.hstack(node, ones_column)
+        ones_column = np.ones((1,), dtype=int)
+        ones_added = np.hstack((node, ones_column))
 
         #checks for duplicate nodes
         if ones_added.tolist() in self.nodes.tolist():
-            print(str(ones_added) + " is already in the wireframe")
+            print(self.strNode(node) + " is already in the wireframe")
             return
 
         #adds nodes to list of nodes
-        self.nodes = np.vstack(self.nodes, ones_added)
+        self.nodes = np.vstack((self.nodes, ones_added))
 
     def addNodes(self, nodes: np.ndarray) -> None:
         #checks for numpy array
@@ -116,7 +120,7 @@ class Wireframe:
             raise TypeError("Please provide a list of 2 nodes")
         if len(edge) != 2:
             raise ValueError("Please use a list of only 2 nodes")
-        if (not isinstance(edge[0], int)) or (not isinstance(edge[0], int)):
+        if (not isinstance(edge[0], int)) or (not isinstance(edge[1], int)):
             raise TypeError("List indices must be integers")
         if edge[0] < 0 or edge[1] < 0 or edge[0] >= len(self.nodes) or edge[1] >= len(self.nodes):
             raise ValueError("List indices out of bounds")
@@ -124,11 +128,11 @@ class Wireframe:
             raise ValueError("Edge cannot be between 2 of the same node")
 
         #checks for duplicate edge
-        if edge in self.edges:
-            print("Edge already in list")
+        if edge in self.edges or edge[::-1] in self.edges:
+            print(self.strEdge(edge) + " is already in the wireframe")
             return
         
-        self.edges += edge
+        self.edges.append(edge)
         
 
     def addEdges(self, edges: list) -> None:
