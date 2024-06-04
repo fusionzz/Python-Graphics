@@ -1,6 +1,6 @@
-from functools import singledispatchmethod
 import numpy as np
 
+"""
 class Node:
     def __init__(self, coordinates: list[float]) -> None:
         self.x = coordinates[0]
@@ -17,6 +17,9 @@ class Node:
     def __str__(self) -> str:
         return "x:" + str(self.x) + " y:" + str(self.y) + " z:" + str(self.z)
 
+"""
+
+"""
 class Edge:
     def __init__(self, start: Node, stop: Node) -> None:
         if start == stop:
@@ -34,103 +37,99 @@ class Edge:
     
     def __str__(self) -> str:
         return str(self.start) + " to " + str(self.stop)
-
+"""
+        
 class Wireframe:
     def __init__(self) -> None:
-        self.nodes = []
+        #creates numpy array with 0 rows and 4 columns, last column for transforms
+        #ex: x y z 1
+        self.nodes = np.zeros((0,4))
         self.edges = []
 
-    def strEdges(self) -> str:
-        edge_str = "Edges:\n"
-        for edge in self.edges:
-            edge_str += str(edge) + "\n"
-        return edge_str
+    def strNode(self, node) -> str:
+        return "x:{node[0]} y:{node[1]} z:{node[2]}"
 
     def strNodes(self) -> str:
         node_str = "Nodes:\n"
+        i = 0
         for node in self.nodes:
-            node_str += str(node) + "\n"
+            node_str += "Node {i}: " + self.strNode(node) + "\n"
+            i += 1
         return node_str
     
-    def printEdges(self) -> None:
+    def strEdges(self) -> str:
         edge_str = "Edges:\n"
+        i = 0
         for edge in self.edges:
-            edge_str += str(edge) + "\n"
-        print(edge_str)
+            edge_str += "Edge {i}: {edge[0]} -> {edge[1]}\n"
+        return edge_str
+    
+    def printEdges(self) -> None:
+        print(self.strEdges())
 
     def printNodes(self) -> None:
-        node_str = "Nodes:\n"
-        for node in self.nodes:
-            node_str += str(node) + "\n"
-        print(node_str)
+        print(self.printNodes())
 
     def __str__(self) -> str:
         return self.strNodes() + self.strEdges()
 
 
-    def addNode(self, node: Node) -> None:
-        #checks for node object
-        if not isinstance(node, Node):
-            raise TypeError("Can only add Node object to nodes")
+    def addNode(self, node: np.ndarray) -> None:
+        #checks for numpy array
+        if not isinstance(node, np.ndarray):
+            raise TypeError("Can only add numpy array to nodes")
+        #checks that node is correct size
+        if node.shape != (3,):
+            raise ValueError("Node is not the correct size")
         
+        #OLD checks for duplicate nodes
+        """
         for listNode in self.nodes:
-            if listNode == node:
+            if (listNode == node).all():
                 print(str(node) + " is already in the wireframe")
                 return
+        """
+        
+        #addes ones column to node
+        ones_column = np.ones((1,))
+        ones_added = np.hstack(node, ones_column)
 
-        self.nodes.append(node)
+        #checks for duplicate nodes
+        if ones_added.tolist() in self.nodes.tolist():
+            print(str(ones_added) + " is already in the wireframe")
+            return
 
-    def addNodes(self, nodes: list[Node]) -> None:
+        #adds nodes to list of nodes
+        self.nodes = np.vstack(self.nodes, ones_added)
+
+    def addNodes(self, nodes: np.ndarray) -> None:
+        #checks for numpy array
+        if not isinstance(nodes, np.ndarray):
+            raise TypeError("Can only add numpy array to nodes")
+        
         for node in nodes:
             self.addNode(node)
 
-    @singledispatchmethod
-    def addEdge(self, edge: Edge) -> None:
-        #checks for edge object
-        if not isinstance(edge, Edge):
-            raise TypeError("Can only add Edge object to edges")
-
-        #confirm not a dupe edge
-        for listEdge in self.edges:
-            if listEdge == edge:
-                print(str(edge) + " is already in the wireframe")
-                return
-
-        #check that nodes are in wireframe before adding edge
-        start = edge.start
-        stop = edge.stop
-        checkStart = False
-        checkStop = False
-        for node in self.nodes:
-            if start == node:
-                checkStart = True
-            if stop == node:
-                checkStop = True
-        
-        #can raise error if node is not in nodes, or can just add it in
-        # if not start:
-        #     raise ValueError(start + " is not in the wireframe, please add it first")
-        # if not stop:
-        #     raise ValueError(stop + " is not in the wireframe, please add it first")
-
-        if not checkStart:
-            self.addNode(start)
-        if not checkStop:
-            self.addNode(stop)
-
-        self.edges.append(edge)
-    
-    @addEdge.register(list)
-    def _(self, edge: list[int]) -> None:
-        #checks that each edge has only 2 nodes
+    def addEdge(self, edge: list) -> None:
+        #checks for proper edges
+        if not isinstance(edge, list):
+            raise TypeError("Please provide a list of 2 nodes")
         if len(edge) != 2:
-            raise ValueError("Please provide only 2 node indices")
+            raise ValueError("Please use a list of only 2 nodes")
+        if (not isinstance(edge[0], int)) or (not isinstance(edge[0], int)):
+            raise TypeError("List indices must be integers")
+        if edge[0] < 0 or edge[1] < 0 or edge[0] >= len(self.nodes) or edge[1] >= len(self.nodes):
+            raise ValueError("List indices out of bounds")
+        if edge[0] == edge[1]:
+            raise ValueError("Edge cannot be between 2 of the same node")
+
+        #checks for duplicate edge
+        if edge in self.edges:
+            print("Edge already in list")
+            return
         
-        #checks that node indices are in bound
-        if edge[0] >= len(self.nodes) or edge[1] >= len(self.nodes) or edge[0] < 0 or edge[1] < 0:
-            raise ValueError("Index out of bounds")
+        self.edges += edge
         
-        self.edges.append(Edge(self.nodes[edge[0]], self.nodes[edge[1]]))
 
     def addEdges(self, edges: list) -> None:
         for edge in edges:
