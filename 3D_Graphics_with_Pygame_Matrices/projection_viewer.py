@@ -72,9 +72,10 @@ class ProjectionViewer:
         for wireframe in self.wireframes.values():
             wireframe.autoScale(sx=scale, sy=scale, sz=scale)
 
-
+    """
+    #DEPRACATED
     def rotateAll(self, axis, theta):
-        """Rotate all wireframe about their center along a given axis by theta"""
+        #Rotate all wireframe about their center along a given axis by theta
 
         rotateFunction = 'rotate' + axis
 
@@ -82,6 +83,14 @@ class ProjectionViewer:
             center = wireframe.findCenter()
             #calls the appropriate rotate function of the wireframe
             getattr(wireframe, rotateFunction)(center, theta)
+    """
+
+    def rotateAll(self, axis, radians):
+        """Rotate all wireframes about given axis by radians"""
+
+        rotateFunction = 'rotate' + axis
+        for wireframe in self.wireframes.values():
+            getattr(wireframe, rotateFunction)(radians)
 
 
     def display(self):

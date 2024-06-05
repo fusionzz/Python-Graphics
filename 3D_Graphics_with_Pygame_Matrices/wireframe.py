@@ -227,14 +227,17 @@ class Wireframe:
             [0, 0, 0, 1]
         ])
     
+    def toCenterAndBack(self, matrix):
+        """translates object to center, applies transformation matrix, translates back"""
+        center_coords = self.findCenter()
+        self.transform(Wireframe.translationMatrix(*[-x for x in center_coords]))
+        self.transform(matrix)
+        self.transform(Wireframe.translationMatrix(*center_coords))
+
+    
     def autoScale(self, sx=0, sy=0, sz=0) -> None:
         scaleMatrix = Wireframe.scaleMatrix(sx, sy, sz)
-        center_coords = self.findCenter()
-        centerMatrixNeg = Wireframe.translationMatrix(*[-x for x in center_coords])
-        centerMatrix = Wireframe.translationMatrix(*center_coords)
-        self.transform(centerMatrixNeg)
-        self.transform(scaleMatrix)
-        self.transform(centerMatrix)
+        self.toCenterAndBack(scaleMatrix)
 
 
     """
@@ -244,8 +247,9 @@ class Wireframe:
     https://www.petercollingridge.co.uk/tutorials/3d/pygame/rotation/
     """
 
+    """
+    #DEPRACATED FOR ALL
     def rotateZ(self, center:list[float], radians:float) -> None:
-        """rotate on z axis around center by radians"""
 
         center_x, center_y, center_z = center
 
@@ -258,7 +262,6 @@ class Wireframe:
             node.y = center_y + d * np.sin(theta)
 
     def rotateX(self, center:list[float], radians:float) -> None:
-        """rotate on x axis around center by radians"""
 
         center_x, center_y, center_z = center
 
@@ -271,7 +274,6 @@ class Wireframe:
             node.y = center_y + d * np.sin(theta)
 
     def rotateY(self, center:list[float], radians:float) -> None:
-        """rotate on y axis around center by radians"""
 
         center_x, center_y, center_z = center
 
@@ -282,5 +284,49 @@ class Wireframe:
             theta = np.arctan2(x, z) + radians
             node.x = center_x + d * np.sin(theta)
             node.z = center_z + d * np.cos(theta)
+    """
 
+    def rotateXMatrix(radians):
+        c = np.cos(radians)
+        s = np.sin(radians)
 
+        return np.array([
+            [1, 0, 0, 0],
+            [0, c, -s, 0],
+            [0, s, c, 0],
+            [0, 0, 0, 1]
+        ])
+    
+    def rotateYMatrix(radians):
+        c = np.cos(radians)
+        s = np.sin(radians)
+
+        return np.array([
+            [c, 0, s, 0],
+            [0, 1, 0, 0],
+            [-s, 0, c, 0],
+            [0, 0, 0, 1]
+        ])
+    
+    def rotateZMatrix(radians):
+        c = np.cos(radians)
+        s = np.sin(radians)
+
+        return np.array([
+            [c, -s, 0, 0],
+            [s, c, 0, 0],
+            [0, 0, 1, 0],
+            [0, 0, 0, 1]
+        ])
+    
+    def rotateX(self, radians):
+        rotateMatrix = Wireframe.rotateXMatrix(radians)
+        self.toCenterAndBack(rotateMatrix)
+
+    def rotateY(self, radians):
+        rotateMatrix = Wireframe.rotateYMatrix(radians)
+        self.toCenterAndBack(rotateMatrix)
+
+    def rotateZ(self, radians):
+        rotateMatrix = Wireframe.rotateZMatrix(radians)
+        self.toCenterAndBack(rotateMatrix)
