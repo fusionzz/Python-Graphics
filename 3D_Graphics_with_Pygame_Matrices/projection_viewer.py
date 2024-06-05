@@ -40,13 +40,6 @@ class ProjectionViewer:
         """Add a named wireframe object"""
         self.wireframes[name] = wireframe
 
-    """
-    #DEPRACATED
-    def translateAll(self, axis:str, d:int):
-        for wireframe in self.wireframes.values():
-            wireframe.translate(axis, d)
-    """
-
     def translateAll(self, vector):
         """translates by x, y, z values in vector"""
         if len(vector) != 3:
@@ -56,34 +49,10 @@ class ProjectionViewer:
         for wf in self.wireframes.values():
             wf.transform(translationMatrix)
     
-    """
-    #DEPRACATED      
-    def scaleAll(self, scale):
-        #Scale all wireframes by given scale, centered at center of the screen
-        center_x = self.width/2
-        center_y = self.height/2
-
-        for wireframe in self.wireframes.values():
-            wireframe.scale((center_x, center_y), scale)
-    """
-    
     def scaleAll(self, scale):
         """Scale all wireframes by given scale"""
         for wireframe in self.wireframes.values():
             wireframe.autoScale(sx=scale, sy=scale, sz=scale)
-
-    """
-    #DEPRACATED
-    def rotateAll(self, axis, theta):
-        #Rotate all wireframe about their center along a given axis by theta
-
-        rotateFunction = 'rotate' + axis
-
-        for wireframe in self.wireframes.values():
-            center = wireframe.findCenter()
-            #calls the appropriate rotate function of the wireframe
-            getattr(wireframe, rotateFunction)(center, theta)
-    """
 
     def rotateAll(self, axis, radians):
         """Rotate all wireframes about given axis by radians"""

@@ -1,43 +1,4 @@
 import numpy as np
-
-"""
-class Node:
-    def __init__(self, coordinates: list[float]) -> None:
-        self.x = coordinates[0]
-        self.y = coordinates[1]
-        self.z = coordinates[2]
-
-    #compare two nodes for equality
-    def __eq__(self, other: object) -> bool:
-        if not isinstance(other, Node):
-            raise TypeError(str(other) + " is not a node,")
-
-        return self.x == other.x and self.y == other.y and self.z == other.z
-    
-    def __str__(self) -> str:
-        return "x:" + str(self.x) + " y:" + str(self.y) + " z:" + str(self.z)
-
-"""
-
-"""
-class Edge:
-    def __init__(self, start: Node, stop: Node) -> None:
-        if start == stop:
-            raise ValueError("Start and stop nodes cannot be the same")
-        self.start = start
-        self.stop = stop
-
-    #compare two edges for equality
-    def __eq__(self, other: object) -> bool:
-        if not isinstance(other, Edge):
-            raise TypeError(str(other) + " is not an edge.")
-        
-        #edges are bidirectional
-        return (self.start == other.start and self.stop == other.stop) or (self.start == other.stop and self.stop == other.start)
-    
-    def __str__(self) -> str:
-        return str(self.start) + " to " + str(self.stop)
-"""
         
 class Wireframe:
     def __init__(self) -> None:
@@ -85,14 +46,6 @@ class Wireframe:
         #checks that node is correct size
         if node.shape != (3,):
             raise ValueError("Node is not the correct size")
-        
-        #OLD checks for duplicate nodes
-        """
-        for listNode in self.nodes:
-            if (listNode == node).all():
-                print(str(node) + " is already in the wireframe")
-                return
-        """
         
         #addes ones column to node
         ones_column = np.ones((1,), dtype=int)
@@ -151,19 +104,6 @@ class Wireframe:
         for edge in edges:
             self.addEdge(edge)
 
-    """
-    #DEPRACATED
-    def findCenter(self) -> list[float]:
-        #Find the center of the wireframe
-
-        num_nodes = len(self.nodes)
-        mean_x = sum([node.x for node in self.nodes]) / num_nodes
-        mean_y = sum([node.y for node in self.nodes]) / num_nodes
-        mean_z = sum([node.z for node in self.nodes]) / num_nodes
-
-        return (mean_x, mean_y, mean_z)
-    """
-
     def findCenter(self) -> list:
         """Finds center of wireframe"""
         num_nodes = self.nodes.shape[0]
@@ -172,50 +112,6 @@ class Wireframe:
         mean_z = sum([node[2] for node in self.nodes]) / num_nodes
 
         return [mean_x, mean_y, mean_z]
-
-    """
-    #DEPRACATED
-    def translate(self, axis:str, d:int) -> None:
-        #Translates each node of wireframe by d along given axis
-        axes = ['x', 'y', 'z']
-        if axis in axes:
-            for node in self.nodes:
-                #setattr(node, axis, getattr(node, axis) + d)
-                node[axes.index(axis)] = node[axes.index(axis)] + d
-        else:
-            raise ValueError("Please enter valid axis")
-    """
-
-    """
-    #DEPRACATED
-    def scale(self, center_coords:list, scale:float) -> None:
-        #Scale the wireframe from the center of the screen
-
-        if len(center_coords) != 2:
-            raise ValueError("Please provide x,y center coords")
-
-        center_x = center_coords[0]
-        center_y = center_coords[1]
-        #center_z = center_coords[2]
-
-        for node in self.nodes:
-            node.x = center_x + scale * (node.x - center_x)
-            node.y = center_y + scale * (node.y - center_y)
-            node.z *= scale
-    """
-
-    """
-    #DEPRACATED
-    def autoScale(self, scale:float) -> None:
-        center_coords = self.findCenter()
-
-        center_x, center_y, center_z = center_coords
-
-        for node in self.nodes:
-            node.x = center_x + scale * (node.x - center_x)
-            node.y = center_y + scale * (node.y - center_y)
-            node.z *= center_z + scale * (node.z - center_z)
-    """
 
     def scaleMatrix(sx=0, sy=0, sz=0) -> np.ndarray:
         """Return matrix for scaling along all axis around center"""
@@ -239,52 +135,6 @@ class Wireframe:
         scaleMatrix = Wireframe.scaleMatrix(sx, sy, sz)
         self.toCenterAndBack(scaleMatrix)
 
-
-    """
-    TO ROTATE AROUND AXIS:
-    convert other 2 coords to cartesian plane, aka hypotenuse and angle
-    then add angle of rotation and convert back
-    https://www.petercollingridge.co.uk/tutorials/3d/pygame/rotation/
-    """
-
-    """
-    #DEPRACATED FOR ALL
-    def rotateZ(self, center:list[float], radians:float) -> None:
-
-        center_x, center_y, center_z = center
-
-        for node in self.nodes:
-            x = node.x - center_x
-            y = node.y - center_y
-            d = np.hypot(y, x)
-            theta = np.arctan2(y, x) + radians
-            node.x = center_x + d * np.cos(theta)
-            node.y = center_y + d * np.sin(theta)
-
-    def rotateX(self, center:list[float], radians:float) -> None:
-
-        center_x, center_y, center_z = center
-
-        for node in self.nodes:
-            z = node.z - center_z
-            y = node.y - center_y
-            d = np.hypot(y, z)
-            theta = np.arctan2(y, z) + radians
-            node.z = center_z + d * np.cos(theta)
-            node.y = center_y + d * np.sin(theta)
-
-    def rotateY(self, center:list[float], radians:float) -> None:
-
-        center_x, center_y, center_z = center
-
-        for node in self.nodes:
-            x = node.x - center_x
-            z = node.z - center_z
-            d = np.hypot(x, z)
-            theta = np.arctan2(x, z) + radians
-            node.x = center_x + d * np.sin(theta)
-            node.z = center_z + d * np.cos(theta)
-    """
 
     def rotateXMatrix(radians):
         c = np.cos(radians)
