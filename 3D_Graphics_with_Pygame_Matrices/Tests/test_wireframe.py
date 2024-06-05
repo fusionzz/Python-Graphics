@@ -79,5 +79,12 @@ class TestWireframeClass(unittest.TestCase):
         self.assertEqual(wf_str, str(self.wireframe))
     """
 
+    def test_find_center(self):
+        center = self.wireframe.findCenter()
+        #rounds float to 2 decimal points
+        for coord in range(len(center)):
+            center[coord] = float("%.2f" % center[coord])
+        self.assertEqual(center, [1.33, 1.67, 2.0])
+
 if __name__ == '__main__':
     unittest.main()

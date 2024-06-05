@@ -1,12 +1,12 @@
-import wireframe
+from wireframe import Wireframe
 import pygame
 import cube_wireframe
 
 key_to_function = {
-        pygame.K_LEFT:   (lambda x: x.translateAll('x', -10)),
-        pygame.K_RIGHT:  (lambda x: x.translateAll('x',  10)),
-        pygame.K_DOWN:   (lambda x: x.translateAll('y',  10)),
-        pygame.K_UP:     (lambda x: x.translateAll('y', -10)),
+        pygame.K_LEFT:   (lambda x: x.translateAll([-10, 0, 0])),
+        pygame.K_RIGHT:  (lambda x: x.translateAll([10, 0, 0])),
+        pygame.K_DOWN:   (lambda x: x.translateAll([0, 10, 0])),
+        pygame.K_UP:     (lambda x: x.translateAll([0, -10, 0])),
         pygame.K_EQUALS: (lambda x: x.scaleAll(1.25)),
         pygame.K_MINUS:  (lambda x: x.scaleAll( 0.8)),
         pygame.K_q: (lambda x: x.rotateAll('X',  0.1)),
@@ -36,14 +36,26 @@ class ProjectionViewer:
         self.edgeColor = (200, 200, 200)
         self.nodeRadius = 4
 
-    def addWireframe(self, name: str, wireframe: wireframe.Wireframe):
+    def addWireframe(self, name: str, wireframe: Wireframe):
         """Add a named wireframe object"""
         self.wireframes[name] = wireframe
 
+    """
+    #DEPRACATED
     def translateAll(self, axis:str, d:int):
         for wireframe in self.wireframes.values():
             wireframe.translate(axis, d)
+    """
 
+    def translateAll(self, vector):
+        """translates by x, y, z values in vector"""
+        if len(vector) != 3:
+            raise ValueError("Please provide only 3 values for xyz")
+        #*vector turns list into values
+        translationMatrix = Wireframe.translationMatrix(*vector)
+        for wf in self.wireframes.values():
+            wf.transform(translationMatrix)
+            
     def scaleAll(self, scale):
         """Scale all wireframes by given scale, centered at center of the screen"""
         center_x = self.width/2

@@ -133,14 +133,28 @@ class Wireframe:
             return
         
         self.edges.append(edge)
-        
+
+    def transform(self, matrix: np.ndarray) -> None:
+        """applies transformation matrix to all nodes"""
+        self.nodes = np.dot(self.nodes, matrix)
+
+    def translationMatrix(dx=0, dy=0, dz=0) -> np.ndarray:
+        """returns translation matrix"""
+        return np.array([
+            [1, 0, 0, 0],
+            [0, 1, 0, 0],
+            [0, 0, 1, 0],
+            [dx, dy, dz, 1]
+        ])
 
     def addEdges(self, edges: list) -> None:
         for edge in edges:
             self.addEdge(edge)
 
+    """
+    #DEPRACATED
     def findCenter(self) -> list[float]:
-        """Find the center of the wireframe"""
+        #Find the center of the wireframe
 
         num_nodes = len(self.nodes)
         mean_x = sum([node.x for node in self.nodes]) / num_nodes
@@ -148,9 +162,21 @@ class Wireframe:
         mean_z = sum([node.z for node in self.nodes]) / num_nodes
 
         return (mean_x, mean_y, mean_z)
-    
+    """
+
+    def findCenter(self) -> list:
+        """Finds center of wireframe"""
+        num_nodes = self.nodes.shape[0]
+        mean_x = sum([node[0] for node in self.nodes]) / num_nodes
+        mean_y = sum([node[1] for node in self.nodes]) / num_nodes
+        mean_z = sum([node[2] for node in self.nodes]) / num_nodes
+
+        return [mean_x, mean_y, mean_z]
+
+    """
+    #DEPRACATED
     def translate(self, axis:str, d:int) -> None:
-        """Translates each node of wireframe by d along given axis"""
+        #Translates each node of wireframe by d along given axis
         axes = ['x', 'y', 'z']
         if axis in axes:
             for node in self.nodes:
@@ -158,9 +184,12 @@ class Wireframe:
                 node[axes.index(axis)] = node[axes.index(axis)] + d
         else:
             raise ValueError("Please enter valid axis")
+    """
 
+    """
+    #DEPRACATED
     def scale(self, center_coords:list, scale:float) -> None:
-        """Scale the wireframe from the center of the screen"""
+        #Scale the wireframe from the center of the screen
 
         if len(center_coords) != 2:
             raise ValueError("Please provide x,y center coords")
@@ -173,7 +202,10 @@ class Wireframe:
             node.x = center_x + scale * (node.x - center_x)
             node.y = center_y + scale * (node.y - center_y)
             node.z *= scale
+    """
 
+    """
+    #DEPRACATED
     def autoScale(self, scale:float) -> None:
         center_coords = self.findCenter()
 
@@ -183,6 +215,11 @@ class Wireframe:
             node.x = center_x + scale * (node.x - center_x)
             node.y = center_y + scale * (node.y - center_y)
             node.z *= center_z + scale * (node.z - center_z)
+    """
+
+    def scaleMatrix(sx=0, sy=0, sz=0) -> np.ndarray:
+        """Return matrix for scaling along all axis around center"""
+        pass
 
 
     """
