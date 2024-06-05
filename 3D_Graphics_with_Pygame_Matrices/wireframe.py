@@ -219,7 +219,22 @@ class Wireframe:
 
     def scaleMatrix(sx=0, sy=0, sz=0) -> np.ndarray:
         """Return matrix for scaling along all axis around center"""
-        pass
+
+        return np.array([
+            [sx, 0, 0, 0],
+            [0, sy, 0, 0],
+            [0, 0, sz, 0],
+            [0, 0, 0, 1]
+        ])
+    
+    def autoScale(self, sx=0, sy=0, sz=0) -> None:
+        scaleMatrix = Wireframe.scaleMatrix(sx, sy, sz)
+        center_coords = self.findCenter()
+        centerMatrixNeg = Wireframe.translationMatrix(*[-x for x in center_coords])
+        centerMatrix = Wireframe.translationMatrix(*center_coords)
+        self.transform(centerMatrixNeg)
+        self.transform(scaleMatrix)
+        self.transform(centerMatrix)
 
 
     """

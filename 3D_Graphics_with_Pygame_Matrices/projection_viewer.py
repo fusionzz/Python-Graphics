@@ -55,14 +55,23 @@ class ProjectionViewer:
         translationMatrix = Wireframe.translationMatrix(*vector)
         for wf in self.wireframes.values():
             wf.transform(translationMatrix)
-            
+    
+    """
+    #DEPRACATED      
     def scaleAll(self, scale):
-        """Scale all wireframes by given scale, centered at center of the screen"""
+        #Scale all wireframes by given scale, centered at center of the screen
         center_x = self.width/2
         center_y = self.height/2
 
         for wireframe in self.wireframes.values():
             wireframe.scale((center_x, center_y), scale)
+    """
+    
+    def scaleAll(self, scale):
+        """Scale all wireframes by given scale"""
+        for wireframe in self.wireframes.values():
+            wireframe.autoScale(sx=scale, sy=scale, sz=scale)
+
 
     def rotateAll(self, axis, theta):
         """Rotate all wireframe about their center along a given axis by theta"""
