@@ -62,7 +62,7 @@ class Wireframe:
         for line in f:
             line = line.split(" ")
             if line[0] == "v":
-                vertex = Vertex(x = line[1], y = line[2], z = line[3])
+                vertex = Vertex(x = float(line[1]), y = float(line[2]), z = float(line[3]))
                 self.vertices.append(vertex)
             elif line[0] == "f":
                 self.triangles.append([int(line[1]) - 1, int(line[2]) - 1, int(line[3]) - 1])
