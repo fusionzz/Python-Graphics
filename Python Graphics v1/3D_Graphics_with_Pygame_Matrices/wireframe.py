@@ -47,7 +47,7 @@ class Wireframe:
         if node.shape != (3,):
             raise ValueError("Node is not the correct size")
         
-        #addes ones column to node
+        #adds ones column to node
         ones_column = np.ones((1,), dtype=int)
         ones_added = np.hstack((node, ones_column))
 
