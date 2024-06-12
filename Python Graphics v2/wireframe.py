@@ -68,6 +68,6 @@ class Wireframe:
                 self.triangles.append([int(line[1]) - 1, int(line[2]) - 1, int(line[3]) - 1])
         f.close()
 
-wf = Wireframe()
-wf.fromObj("VideoShip.obj")
-print(wf)
+    def fromScratch(self, vertices: list, triangles: list):
+        self.vertices = vertices
+        self.triangles = triangles
